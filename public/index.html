@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Arc Raiders Map</title>
+<style>
+  #map-container {
+    position: relative;
+    width: 800px; 
+    height: 600px;
+    background: url('map.png') no-repeat;
+    background-size: cover;
+    border: 2px solid #333;
+  }
+  .marker {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: red;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<h2>Arc Raiders Map</h2>
+<div id="map-container"></div>
+
+<script>
+const mapContainer = document.getElementById('map-container');
+
+async function loadMarkers() {
+    try {
+        const res = await fetch('/markers');
+        const markers = await res.json();
+
+        mapContainer.innerHTML = '';
+
+        markers.forEach(marker => {
+            const el = document.createElement('div');
+            el.className = 'marker';
+            const scaleX = mapContainer.offsetWidth / 1920;
+            const scaleY = mapContainer.offsetHeight / 1080;
+            el.style.left = marker.x * scaleX + 'px';
+            el.style.top = marker.y * scaleY + 'px';
+            mapContainer.appendChild(el);
+        });
+    } catch (err) {
+        console.error('Failed to load markers', err);
+    }
+}
+
+setInterval(loadMarkers, 2000);
+loadMarkers();
+</script>
+</body>
+</html>
